@@ -1,0 +1,12 @@
+# Copyright (c) 2013,2014 Fingerprint Cards AB <tech@fingerprints.com>
+#
+# 2019 Mod for 'dragonheart@daisy' by Victor Bo <eremitein@xda/zerovoid@4pda>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License Version 2
+# as published by the Free Software Foundation.
+
+key 195   SYSTEM_NAVIGATION_UP
+key 196   SYSTEM_NAVIGATION_DOWN
+key 197   SYSTEM_NAVIGATION_LEFT
+key 198   PASTE

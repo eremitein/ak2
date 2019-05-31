@@ -2,7 +2,7 @@
 
 # Copyright (c) 2012-2013, 2016-2018, The Linux Foundation. All rights reserved.
 #
-# 2019 Mod for "daisy" by eremitein@xda aka zerovoid@4pda
+# 2019 Mod for 'butterfly@daisy' by Victor Bo <eremitein@xda/zerovoid@4pda>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -260,7 +260,7 @@ global_func
 	echo 100 > /proc/sys/vm/swappiness
 
 	configure_zram_parameters
-	configure_read_ahead
+	#configure_read_ahead
 }
 
 function enable_memory_features()
@@ -419,8 +419,7 @@ echo "msm8953_soc: apply sched"
   if [ $KernelVersionA -ge 4 ] && [ $KernelVersionB -ge 9 ]; then
     sched_dcvs_eas
   else
-    #sched_dcvs_hmp
-    sched_dcvs_load
+    sched_dcvs_hmp
   fi
 }
 
@@ -479,17 +478,32 @@ echo "msm8953_soc: apply hq boost"
   echo 0:1401600 1:1401600 2:1401600 3:1401600 4:1401600 5:1401600 6:1401600 7:1401600 > /sys/module/cpu_boost/parameters/input_boost_freq
 }
 
+echo "apply rules for daisy"
+configure_memory_parameters
+start_hbtp
+msm8953_hbtp
+
 kversion=`cat /proc/sys/kernel/osrelease`
 kversions=${kversion:25:4}
 if [ "$kversions" = "zero" ]; then
-  echo "apply msm8953_soc"
-  configure_memory_parameters
-	start_hbtp
-	msm8953_hbtp
-	msm8953_apply_sched
+	echo "apply butterfly msm8953_soc"
 	msm8953_sched_boost
-	#msm8953_low_power
-	#msm8953_smp_sched
+	sched_dcvs_load
+	msm8953_cores_on
+else
+	echo "apply stock msm8953_soc"
+	disable_core_ctl
+	msm8953_mincpubw
+	msm8953_bw_hwmon
+	msm8953_bimc
+	msm8953_disable_bcl
+	msm8953_apply_sched
+	msm8953_cores_on
+	msm8953_low_power
+	msm8953_enable_bcl
+	msm8953_smp_sched
+	msm8953_hq_boost
+	configure_read_ahead
 fi
 
 echo "apply ondemand chown"

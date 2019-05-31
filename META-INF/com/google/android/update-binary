@@ -187,6 +187,10 @@ if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.modules)" == 1 ]; then
     fi;
   fi;
   #fixdone
+  #fix for fp gestures
+  cat /tmp/anykernel/input > /system/usr/keylayout/uinput-fpc.kl
+  cat /tmp/anykernel/input > /system/usr/keylayout/uinput-goodix.kl
+  #fixdone
   cd /tmp/anykernel;
   $bb mount -o ro,remount -t auto /system;
   $bb mount -o ro,remount -t auto /vendor 2>/dev/null;

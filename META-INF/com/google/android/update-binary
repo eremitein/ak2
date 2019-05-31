@@ -170,20 +170,22 @@ if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.modules)" == 1 ]; then
   mv -v /system/lib/modules/wlan.ko /system/lib/modules/originwlan.ko;
   rm /system/lib/modules/pronto_wlan.ko;
   #fixdone
-  #fix hardcoded cpu freqs in vendor
-  if [ ! $(grep '#echo#' /vendor/bin/init.qcom.post_boot.sh)]; then
-	  sed -i \
-    '/652800/a \                echo "interactive" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor' \
-     /vendor/bin/init.qcom.post_boot.sh
-    sed -i '/652800/s/echo /#echo# /' /vendor/bin/init.qcom.post_boot.sh
-    #sed -i '/1401600/s/echo /#echo# /' /vendor/bin/init.qcom.post_boot.sh
+  #fix hardcoded values in vendor
+  if [ ! -r /vendor/bin/init.qcom.post_boot.sh_orig ]; then
+    mv /vendor/bin/init.qcom.post_boot.sh /vendor/bin/init.qcom.post_boot.sh_orig;
   fi
-  sed -i '/1401600/s/#echo# /echo /' /vendor/bin/init.qcom.post_boot.sh
-  #fixdone
+  if [ ! $(grep 'treble_' /system/build.prop) ]; then
+    cat /tmp/anykernel/init.qcom.post_boot.sh > /vendor/bin/init.qcom.post_boot.sh;
+  else
+    cat /tmp/anykernel/init.qcom.post_boot.sh > /system/etc/init.d/zero.sh;
+  fi;
+  chmod 755 /system/etc/init.d/zero.sh /vendor/bin/init.qcom.post_boot.sh;
   #fix for visual effects
-  if [ ! $(grep '#visual_tweak' /system/build.prop)]; then
-    cat /tmp/anykernel/visual.prop >> /system/build.prop
-  fi
+  if [ ! $(grep DLMI /system/build.prop) ]; then
+    if [ ! $(grep '#visual_tweak' /system/build.prop) ]; then
+      cat /tmp/anykernel/visual.prop >> /system/build.prop;
+    fi;
+  fi;
   #fixdone
   cd /tmp/anykernel;
   $bb mount -o ro,remount -t auto /system;

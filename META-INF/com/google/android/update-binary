@@ -171,15 +171,15 @@ if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.modules)" == 1 ]; then
   rm /system/lib/modules/pronto_wlan.ko;
   #fixdone
   #fix hardcoded values in vendor
-  if [ ! -r /vendor/bin/init.qcom.post_boot.sh_orig ]; then
+  if [ ! -f /vendor/bin/init.qcom.post_boot.sh_orig ]; then
     mv /vendor/bin/init.qcom.post_boot.sh /vendor/bin/init.qcom.post_boot.sh_orig;
   fi
-  if [ ! $(grep 'treble_' /system/build.prop) ]; then
-    cat /tmp/anykernel/init.qcom.post_boot.sh > /vendor/bin/init.qcom.post_boot.sh;
-  else
-    cat /tmp/anykernel/init.qcom.post_boot.sh > /system/etc/init.d/zero.sh;
-  fi;
-  chmod 755 /system/etc/init.d/zero.sh /vendor/bin/init.qcom.post_boot.sh;
+  if [ -f /system/etc/init.d/zero.sh ]; then
+    rm /system/etc/init.d/zero.sh;
+  fi
+  cp -v /tmp/anykernel/init.qcom.post_boot.sh /vendor/bin/init.qcom.post_boot.sh;
+  chcon -v "u:object_r:qti_init_shell_exec:s0" /vendor/bin/init.qcom.post_boot.sh;
+  chmod 755 /vendor/bin/init.qcom.post_boot.sh;
   #fix for visual effects
   if [ ! $(grep DLMI /system/build.prop) ]; then
     if [ ! $(grep '#visual_tweak' /system/build.prop) ]; then
